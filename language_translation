@@ -1,0 +1,77 @@
+import customtkinter as ctk
+from googletrans import Translator
+
+# ----- Theme Setup -----
+ctk.set_appearance_mode("light")  # light/dark/system
+ctk.set_default_color_theme("green")  # You can use "blue", "dark-blue", "green"
+
+# ----- Translator Instance -----
+translator = Translator()
+
+# ----- Language Options -----
+languages = {
+    'English': 'en',
+    'Urdu': 'ur',
+    'Hindi': 'hi',
+    'French': 'fr',
+    'Spanish': 'es',
+    'German': 'de',
+    'Arabic': 'ar',
+    'Chinese': 'zh-cn'
+}
+
+# ----- Translate Function -----
+def translate_text():
+    input_value = input_entry.get("0.0", "end").strip()
+    src_lang_code = languages[source_lang_var.get()]
+    tgt_lang_code = languages[target_lang_var.get()]
+    try:
+        translated = translator.translate(input_value, src=src_lang_code, dest=tgt_lang_code)
+        output_entry.configure(state="normal")
+        output_entry.delete("0.0", "end")
+        output_entry.insert("0.0", translated.text)
+        output_entry.configure(state="disabled")
+    except Exception as e:
+        output_entry.configure(state="normal")
+        output_entry.delete("0.0", "end")
+        output_entry.insert("0.0", f"Error: {e}")
+        output_entry.configure(state="disabled")
+
+# ----- GUI App Setup -----
+app = ctk.CTk()
+app.title("🌸 Pastel Google Translator")
+app.geometry("600x500")
+app.configure(bg="#FFF8F0")  # pastel background
+
+# ----- Fonts -----
+heading_font = ctk.CTkFont(size=22, weight="bold")
+label_font = ctk.CTkFont(size=14)
+
+# ----- Title -----
+ctk.CTkLabel(app, text="🌍 Google Translator", font=heading_font).pack(pady=10)
+
+# ----- Source Language -----
+ctk.CTkLabel(app, text="Source Language", font=label_font).pack()
+source_lang_var = ctk.StringVar(value='English')
+ctk.CTkOptionMenu(app, variable=source_lang_var, values=list(languages.keys()), width=200).pack(pady=5)
+
+# ----- Target Language -----
+ctk.CTkLabel(app, text="Target Language", font=label_font).pack()
+target_lang_var = ctk.StringVar(value='Urdu')
+ctk.CTkOptionMenu(app, variable=target_lang_var, values=list(languages.keys()), width=200).pack(pady=5)
+
+# ----- Input Text -----
+ctk.CTkLabel(app, text="Enter Text to Translate", font=label_font).pack(pady=(10, 0))
+input_entry = ctk.CTkTextbox(app, width=500, height=100, font=("Arial", 12))
+input_entry.pack(pady=5)
+
+# ----- Translate Button -----
+ctk.CTkButton(app, text="🔁 Translate", command=translate_text, fg_color="#FFB6C1", text_color="black", hover_color="#FF69B4").pack(pady=15)
+
+# ----- Output Text -----
+ctk.CTkLabel(app, text="Translated Output", font=label_font).pack()
+output_entry = ctk.CTkTextbox(app, width=500, height=100, state="disabled", font=("Arial", 12))
+output_entry.pack(pady=5)
+
+# ----- Run the App -----
+app.mainloop()
